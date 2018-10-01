@@ -14,10 +14,11 @@
                         <el-option label="待初面" value="待初面"></el-option>
                         <el-option label="待复面" value="待复面"></el-option>
                         <el-option label="待三面" value="待三面"></el-option>
-                        <el-option label="待四面" value="待四面"></el-option>
+                        <!--<el-option label="待四面" value="待四面"></el-option>-->
                         <el-option label="待HR面" value="待HR面"></el-option>
-                        <el-option label="待OFFER" value="待OFFER"></el-option>
-                        <el-option label="结束" value="结束"></el-option>
+                        <el-option label="待通知" value="待通知"></el-option>
+                        <el-option label="被拒" value="被拒"></el-option>
+                        <el-option label="OFFER" value="OFFER"></el-option>
                     </el-select>
                 </el-form-item>
                 <el-form-item>
@@ -36,24 +37,31 @@
                 </el-form-item>
             </el-form>
         </el-col>
-
         <!--列表-->
         <el-table id="job" :data="jobs" highlight-current-row v-loading="listLoading" @selection-change="selsChange">
+            <el-table-column type="expand" min-width="30">
+                <template slot-scope="props">
+                    <el-steps :active="props.row.step.active" :process-status="props.row.step.status">
+                        <el-step v-for="(item,index) in props.row.step.stepDatas" :title="item.progress"
+                                 :description="item.updateTime"></el-step>
+                    </el-steps>
+                </template>
+            </el-table-column>
             <el-table-column type="selection" min-width="30">
             </el-table-column>
             <el-table-column type="index" width="60">
             </el-table-column>
             <!--<el-table-column prop="id" label="ID" min-width="60">-->
             <!--</el-table-column>-->
-            <el-table-column prop="companyName" label="公司" min-width="80" sortable>
+            <el-table-column prop="companyName" label="公司" min-width="80">
             </el-table-column>
-            <el-table-column prop="companyAddress" label="地点" min-width="60" sortable>
+            <el-table-column prop="companyAddress" label="地点" min-width="60">
+            </el-table-column>
+            <el-table-column prop="submitType" label="投递类型" min-width="80">
             </el-table-column>
             <el-table-column prop="submitTime" label="投递时间" min-width="80" sortable>
             </el-table-column>
-            <el-table-column prop="submitType" label="投递类型" min-width="80" sortable>
-            </el-table-column>
-            <el-table-column prop="progress" label="当前进度" min-width="80" sortable>
+            <el-table-column prop="progress" label="当前进度" min-width="80">
             </el-table-column>
             <el-table-column prop="comment" label="备注" min-width="100" :show-overflow-tooltip="true">
             </el-table-column>
@@ -78,7 +86,7 @@
         <!--对话框-->
         <el-dialog title="投递记录" v-model="editFormVisible" :close-on-click-modal="false" :show-close="false">
             <el-form :model="editForm" label-width="50px" :rules="editFormRules" ref="editForm"
-                     style="padding:0px 10px;">
+                     style="padding:0px 0px;">
                 <el-form-item label="公司" prop="companyName">
                     <el-input v-model="editForm.companyName" auto-complete="off"></el-input>
                 </el-form-item>
@@ -112,10 +120,11 @@
                         <el-radio-button label="待初面"></el-radio-button>
                         <el-radio-button label="待复面"></el-radio-button>
                         <el-radio-button label="待三面"></el-radio-button>
-                        <el-radio-button label="待四面"></el-radio-button>
+                        <!--<el-radio-button label="待四面"></el-radio-button>-->
                         <el-radio-button label="待HR面"></el-radio-button>
-                        <el-radio-button label="待OFFER"></el-radio-button>
-                        <el-radio-button label="结束"></el-radio-button>
+                        <el-radio-button label="待通知"></el-radio-button>
+                        <el-radio-button label="被拒"></el-radio-button>
+                        <el-radio-button label="OFFER"></el-radio-button>
                     </el-radio-group>
                 </el-form-item>
                 <el-form-item label="备注">
@@ -171,6 +180,7 @@
                 }
             }
         },
+
         methods: {
             handleCurrentChange(val) {
                 this.page = val;
@@ -208,6 +218,7 @@
                     if (res.status === 200) {
                         this.total = res.data.totalElements;
                         this.jobs = res.data.content;
+                        this.updateSteps(res.data.content);
                     }
                     this.listLoading = false;
                     //NProgress.done();
@@ -364,7 +375,73 @@
             },
             selsChange: function (sels) {
                 this.sels = sels;
-            }
+            },
+            /* 适配器模式 */
+            stepIO() {
+
+            },
+            /* 进度条函数 */
+            updateSteps(data) {
+                for (let k = 0; k < data.length; k++) {
+                    let history = JSON.parse(data[k].history), progress = data[k].progress, l = 0,
+                        is = ['初筛通过', '笔试通过', '初面通过', '复面通过', '三面通过', 'HR面通过', '拿到OFFER'],
+                        isf = ['初筛未通过', '笔试未通过', '初面未通过', '复面未通过', '三面未通过', 'HR面未通过', '未拿到OFFER'],
+                        ws = ['初筛', '待笔试', '待初面', '待复面', '待三面', '待HR面', '待通知', '被拒', 'OFFER'],
+                        step = [{
+                            progress: '初筛',
+                            updateTime: '2017-12-18'
+                        }, {
+                            progress: '笔试',
+                            updateTime: ''
+                        }, {
+                            progress: '初面',
+                            updateTime: ''
+                        }, {
+                            progress: '复面',
+                            updateTime: ''
+                        }, {
+                            progress: '三面',
+                            updateTime: ''
+                        }, {
+                            progress: 'HR面',
+                            updateTime: ''
+                        }, {
+                            progress: 'OFFER',
+                            updateTime: ''
+                        }],
+                        stepInfo = {
+                            active: 1,
+                            status: 'process',
+                            stepDatas: []
+                        };
+                    /* 设置当前是否为进行中状态 */
+                    stepInfo.active = history.length;
+                    if (history.length < 1) {
+                        step[0].updateTime = data[k].submitTime;
+                        l = ws.indexOf(progress);
+                        stepInfo.stepDatas = history.concat(step.slice(l));
+                        if (progress === '被拒') {
+                            stepInfo.stepDatas = [{
+                                progress: '被拒',
+                                updateTime: data[k].updateTime
+                            }];
+                            stepInfo.status = 'error';
+                        }
+                    } else {
+                        if (progress !== '被拒') {
+                            l = is.indexOf(history[history.length - 1].progress);
+                            stepInfo.stepDatas = history.concat(step.slice(l + 1));
+                            stepInfo.status = 'process';
+                        } else {
+                            l = isf.indexOf(history[history.length - 1].progress);
+                            stepInfo.stepDatas = history.concat(step.slice(l + 1));
+                            stepInfo.active = history.length - 1;
+                            stepInfo.status = 'error';
+                        }
+                    }
+                    this.jobs[k].step = stepInfo;
+                }
+            },
         },
         mounted() {
             this.getJobs();
@@ -373,6 +450,48 @@
 
 </script>
 
-<style scoped>
+<style>
+    .el-step__head.is-text.is-success {
+        background-color: #20a0ff;
+        border-color: #20a0ff;
+    }
 
+    .el-step__title.is-success {
+        color: #20a0ff;
+    }
+
+    .el-step__description.is-success {
+        color: #20a0ff;
+    }
+
+    .el-step__head.is-text.is-process {
+        background-color: rgba(155, 155, 155, 1);
+        color: rgba(255, 255, 255, 1);
+        font-weight: 200;
+        border-color: rgba(155, 155, 155, 1);
+    }
+
+    .el-step__title.is-process {
+        color: rgba(155, 155, 155, 1);
+    }
+
+    .el-step__description.is-process {
+        color: rgba(155, 155, 155, 1);
+    }
+
+    .el-step__line-inner {
+        width: 100% !important;
+    }
+
+    .el-step__title {
+        font-size: 12px;
+    }
+
+    .el-step__title.is-finish {
+        font-weight: 200;
+    }
+
+    .el-step__description {
+        font-size: 12px;
+    }
 </style>
