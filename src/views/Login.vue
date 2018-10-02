@@ -4,11 +4,13 @@
                  class="demo-ruleForm login-container" style="text-align:right">
             <h1 class="title">在校生登录</h1>
             <el-form-item prop="account">
-                <el-input type="text" v-model="ruleForm2.account" placeholder="账号" autofocus="true" @keyup.enter.native="handleSubmit2">
+                <el-input type="text" v-model="ruleForm2.account" placeholder="账号" autofocus
+                          @keyup.enter.native="handleSubmit2">
                 </el-input>
             </el-form-item>
             <el-form-item prop="checkPass">
-                <el-input type="password" v-model="ruleForm2.checkPass" placeholder="密码" @keyup.enter.native="handleSubmit2"></el-input>
+                <el-input type="password" v-model="ruleForm2.checkPass" placeholder="密码"
+                          @keyup.enter.native="handleSubmit2"></el-input>
             </el-form-item>
             <el-checkbox v-model="checked" checked class="remember">记住密码</el-checkbox>
             <el-form-item style="width:100%;">
@@ -43,6 +45,7 @@
 <script>
     import {login} from '../api/api';
     import util from '../common/js/util'
+
     export default {
         data() {
             return {

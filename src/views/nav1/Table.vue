@@ -38,7 +38,8 @@
             </el-form>
         </el-col>
         <!--列表-->
-        <el-table id="job" :data="jobs" highlight-current-row v-loading="listLoading" @selection-change="selsChange">
+        <el-table id="job" :data="jobs" highlight-current-row v-loading="listLoading"
+                  @selection-change="selsChange" @sort-change="sortChange">
             <el-table-column type="expand" min-width="30">
                 <template slot-scope="props">
                     <el-steps :active="props.row.step.active" :process-status="props.row.step.status">
@@ -49,7 +50,10 @@
             </el-table-column>
             <el-table-column type="selection" min-width="30">
             </el-table-column>
-            <el-table-column type="index" width="60">
+            <el-table-column width="60">
+                <template scope="scope">
+                    {{scope.$index + 1 + pageSize*(page-1)}}
+                </template>
             </el-table-column>
             <!--<el-table-column prop="id" label="ID" min-width="60">-->
             <!--</el-table-column>-->
@@ -59,13 +63,13 @@
             </el-table-column>
             <el-table-column prop="submitType" label="投递类型" min-width="80">
             </el-table-column>
-            <el-table-column prop="submitTime" label="投递时间" min-width="80" sortable>
+            <el-table-column prop="submitTime" label="投递时间" min-width="80" sortable="custom">
             </el-table-column>
             <el-table-column prop="progress" label="当前进度" min-width="80">
             </el-table-column>
             <el-table-column prop="comment" label="备注" min-width="100" :show-overflow-tooltip="true">
             </el-table-column>
-            <el-table-column prop="updateTime" label="更新时间" min-width="80" sortable>
+            <el-table-column prop="updateTime" label="更新时间" min-width="80" sortable="custom">
             </el-table-column>
             <el-table-column label="操作" min-width="100">
                 <template scope="scope">
@@ -154,6 +158,8 @@
                     progress: '',
                     addr: ''
                 },
+                subSort: 0,
+                updSort: -1,
                 sels: [],//列表选中列
                 jobs: [],
                 total: 0,
@@ -209,6 +215,8 @@
                     name: this.filterParam.name,
                     progress: this.filterParam.progress,
                     addr: this.filterParam.addr,
+                    subSort: this.subSort,
+                    updSort: this.updSort,
                     page: this.page,
                     pageSize: this.pageSize
                 };
@@ -376,9 +384,28 @@
             selsChange: function (sels) {
                 this.sels = sels;
             },
-            /* 适配器模式 */
-            stepIO() {
-
+            sortChange: function ({column, prop, order}) {
+                if (order === "ascending") {
+                    if (prop === "submitTime") {
+                        this.subSort = 0;
+                        this.updSort = -1;
+                    }
+                    if (prop === "updateTime") {
+                        this.updSort = 0;
+                        this.subSort = -1;
+                    }
+                }
+                if (order === "descending") {
+                    if (prop === "submitTime") {
+                        this.subSort = 1;
+                        this.updSort = -1;
+                    }
+                    if (prop === "updateTime") {
+                        this.updSort = 1;
+                        this.subSort = -1;
+                    }
+                }
+                this.getJobs();
             },
             /* 进度条函数 */
             updateSteps(data) {
