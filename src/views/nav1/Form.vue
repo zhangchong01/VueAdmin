@@ -18,6 +18,7 @@
 
 <script>
     import {resetPass} from '../../api/api';
+    import util from '../../common/js/util'
 
     export default {
         data() {
@@ -35,6 +36,13 @@
                     this.$message({
                         message: "两次密码不一致",
                         type: 'warning'
+                    });
+                    return;
+                }
+                if (!util.checkPsw(this.form.password)) {
+                    this.$message({
+                        message: "请输入合法密码",
+                        type: 'error'
                     });
                     return;
                 }

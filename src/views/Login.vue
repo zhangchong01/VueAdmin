@@ -76,6 +76,20 @@
                 this.$refs.ruleForm2.validate((valid) => {
                     if (valid) {
                         // _this.$router.replace('/table');
+                        if (!util.checkAccount(this.ruleForm2.account)) {
+                            this.$message({
+                                message: "请输入合法账号",
+                                type: 'error'
+                            });
+                            return;
+                        }
+                        if (!util.checkPsw(this.ruleForm2.checkPass)) {
+                            this.$message({
+                                message: "请输入合法密码",
+                                type: 'error'
+                            });
+                            return;
+                        }
                         this.logining = true;
                         let loginParams = {
                             username: this.ruleForm2.account,

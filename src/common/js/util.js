@@ -7,6 +7,22 @@ function padding(s, len) {
 };
 
 export default {
+    checkComment(input){
+        var reg = /^[a-zA-Z0-9\u4e00-\u9fa5]{0,50}$/;
+        return reg.test(input);
+    },
+    checkCompanyName(input){
+        var reg = /^[a-zA-Z0-9\u4e00-\u9fa5]{0,12}$/;
+        return reg.test(input);
+    },
+    checkAccount(input){
+        var reg = /^[a-z]{2,12}$/;
+        return reg.test(input);
+    },
+    checkPsw(input){
+        var reg = /^[a-zA-Z0-9]{2,12}$/;
+        return reg.test(input);
+    },
     getQueryStringByName: function (name) {
         var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
         var r = window.location.search.substr(1).match(reg);

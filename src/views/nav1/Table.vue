@@ -211,6 +211,13 @@
                 //     this.listLoading = false;
                 //     //NProgress.done();
                 // });
+                if (!util.checkCompanyName(this.filterParam.name)) {
+                    this.$message({
+                        message: "请输入12字以内的合法字符",
+                        type: 'error'
+                    });
+                    return;
+                }
                 let param = {
                     name: this.filterParam.name,
                     progress: this.filterParam.progress,
@@ -256,6 +263,20 @@
                 }
                 this.$refs.editForm.validate((valid) => {
                     if (valid) {
+                        if (!util.checkCompanyName(this.editForm.companyName)) {
+                            this.$message({
+                                message: "请输入12字以内的合法字符",
+                                type: 'error'
+                            });
+                            return;
+                        }
+                        if (!util.checkComment(this.editForm.comment)) {
+                            this.$message({
+                                message: "请输入50字以内的合法字符",
+                                type: 'error'
+                            });
+                            return;
+                        }
                         this.editLoading = true;
                         //NProgress.start();
                         let param = Object.assign({}, this.editForm);
