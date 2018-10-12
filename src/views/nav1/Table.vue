@@ -186,7 +186,6 @@
                 }
             }
         },
-
         methods: {
             handleCurrentChange(val) {
                 this.page = val;
@@ -431,13 +430,15 @@
             /* 进度条函数 */
             updateSteps(data) {
                 for (let k = 0; k < data.length; k++) {
-                    let history = JSON.parse(data[k].history), progress = data[k].progress, l = 0,
+                    let history = JSON.parse(data[k].history),
+                        progress = data[k].progress,
+                        l = 0,
                         is = ['初筛通过', '笔试通过', '初面通过', '复面通过', '三面通过', 'HR面通过', '拿到OFFER'],
                         isf = ['初筛未通过', '笔试未通过', '初面未通过', '复面未通过', '三面未通过', 'HR面未通过', '未拿到OFFER'],
                         ws = ['初筛', '待笔试', '待初面', '待复面', '待三面', '待HR面', '待通知', '被拒', 'OFFER'],
                         step = [{
                             progress: '初筛',
-                            updateTime: '2017-12-18'
+                            updateTime: ''
                         }, {
                             progress: '笔试',
                             updateTime: ''

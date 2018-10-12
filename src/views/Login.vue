@@ -68,6 +68,17 @@
             };
         },
         methods: {
+            remember() {
+                let tmp = localStorage.getItem('remember');
+                if (tmp === '1') {
+                    this.checked = true;
+                } else {
+                    this.checked = false;
+                    return;
+                }
+                this.ruleForm2.account = localStorage.getItem('username');
+                this.ruleForm2.checkPass = localStorage.getItem('password');
+            },
             handleReset2() {
                 this.$refs.ruleForm2.resetFields();
             },
@@ -105,6 +116,13 @@
                             } else {
                                 sessionStorage.setItem('user', data.username);
                                 sessionStorage.setItem('date', util.formatDate.format(new Date(), 'yyyy-MM-dd'));
+                                let tmp = 0;
+                                if (this.checked) {
+                                    tmp = 1;
+                                }
+                                localStorage.setItem('remember', tmp);
+                                localStorage.setItem('username', this.ruleForm2.account);
+                                localStorage.setItem('password', this.ruleForm2.checkPass);
                                 _this.$router.push({path: '/table'});
                             }
                         }).catch(error => {
@@ -115,6 +133,9 @@
                     }
                 });
             }
+        },
+        mounted() {
+            this.remember();
         }
     }
 
